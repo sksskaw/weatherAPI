@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kth.weatherAPI.mapper.WeatherMapper">
+
+	<select id="selectWeatherList" resultType="map" parameterType="map">
+		SELECT weather_point weatherPoint,
+	    	   weather_place weatherPlace,
+		 	   DATE_FORMAT(weather_date,'%Y-%m-%d %H:00') weatherDate,
+		 	   weather_temperatures weatherTemperatures,
+		 	   weather_wind_speed weatherWindSpeed,
+		 	   weather_humidity weatherHumidity,
+		  	   weather_atmospheric_pressure weatherAtmosphericPressure
+		  FROM weather
+	<where>
+		<if test="weatherPoint != null">
+			weather_point = #{weatherPoint}
+		</if>
+		<if test="startDateTime != null">
+			AND DATE_FORMAT(weather_date,'%Y%m%d%H') BETWEEN #{startDateTime} AND #{endDateTime}
+		</if>
+	</where>
+	</select>
+	
+	<select id="selectWeatherPoint" resultType="Integer" parameterType="int">
+		SELECT DISTINCT weather_point weatherPoint
+		  FROM weather
+		 WHERE weather_point = #{weatherPoint}
+	</select>
+	
+	<insert id="insertWeather" parameterType="com.kth.weatherAPI.vo.Weather">
+		INSERT INTO weather(weather_point,
+						    weather_place,
+						    weather_date,
+						    weather_temperatures,
+						    weather_wind_speed,
+						    weather_humidity,
+						    weather_atmospheric_pressure)
+			 VALUES(#{weatherPoint},
+			 		#{weatherPlace},
+			 		DATE_FORMAT(#{weatherDate}, '%Y-%m-%d %H:00:00'),
+			 		#{weatherTemperatures},
+			 		#{weatherWindSpeed},
+			 		#{weatherHumidity},
+			 		#{weatherAtmosphericPressure})
+	</insert>
+</mapper>
